@@ -9,7 +9,7 @@ int mark[max_size];
 
 typedef struct{
     ElementType data[max_size];
-    int top;
+    int top_idx;
 }Stack;
 
 typedef struct{
@@ -18,24 +18,24 @@ typedef struct{
 }Graph;
 
 void init_stack(Stack *pS){
-    pS->top = -1;
+    pS->top_idx = -1;
 }
 
 void push (Stack *pS, ElementType u){
-    pS->top++;
-    pS->data[pS->top] = u;
+    pS->top_idx++;
+    pS->data[pS->top_idx] = u;
 }
 
-ElementType peek (Stack *pS){
-    return pS->data[pS->top];
+ElementType top (Stack *pS){
+    return pS->data[pS->top_idx];
 }
 
 void pop (Stack *pS){
-    pS->top--;
+    pS->top_idx--;
 }
 
 int empty(Stack *pS){
-    return pS->top == -1;
+    return pS->top_idx == -1;
 }
 
 void init_graph (Graph *pG, int n){
@@ -58,7 +58,7 @@ void DFS (Graph *pG, int s){
     init_stack(&S);
     push(&S, s);
     while (!empty(&S)){
-        int u = peek(&S);
+        int u = top(&S);
         pop(&S);
 
         if (mark[u] != 0){

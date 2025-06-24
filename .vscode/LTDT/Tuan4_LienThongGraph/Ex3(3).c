@@ -8,7 +8,7 @@ typedef int ElementType;
 int mark[max_size];
 typedef struct{
     ElementType data[max_size];
-    int top;
+    int top_idx;
 }Stack;
 
 typedef struct{
@@ -18,28 +18,28 @@ typedef struct{
 
 //khởi tạo ngăn xếp
 void init_stack(Stack *pS){
-    pS->top = -1;
+    pS->top_idx = -1;
 }
 
 //thêm ptu u vào đỉnh ngăn xếp
 void push(Stack *pS, ElementType u){
-    pS->top++;
-    pS->data[pS->top] = u;
+    pS->top_idx++;
+    pS->data[pS->top_idx] = u;
 }
 
 //Hàm xem phần tử trên đỉnh ngăn xếp
-ElementType peek(Stack *pS){
-    return pS->data[pS->top];
+ElementType top(Stack *pS){
+    return pS->data[pS->top_idx];
 }
 
 //Hàm xóa ptu trên đỉnh ngăn xếp
 void pop(Stack *pS){
-    pS->top--;
+    pS->top_idx--;
 }
 
 //Kiểm tra ngăn xếp rỗng
 int empty(Stack *pS){
-    return pS->top == -1;  //
+    return pS->top_idx == -1;  //
 }
 
 void init_graph (Graph *pG, int n){
@@ -64,7 +64,7 @@ void DFS(Graph *pG, int s){
     init_stack(&S);
     push(&S, s);
     while (!empty(&S)){
-        int u = peek(&S);
+        int u = top(&S);
         pop(&S);
         if (mark[u] != 0){
             continue;
