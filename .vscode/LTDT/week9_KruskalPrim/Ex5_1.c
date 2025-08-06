@@ -32,7 +32,8 @@ void init_graph(Graph *pG, int n)
 //}
 //// d? bài là u < v
 
-void add_edge(Graph *pG, int u, int v, int w){	
+void add_edge(Graph *pG, int u, int v, int w){
+    //để in ra là đỉnh nào trong 2 đỉnh nhỏ hơn thì nằm trước
 	if (u > v){
 		int temp = u;
 		u = v;

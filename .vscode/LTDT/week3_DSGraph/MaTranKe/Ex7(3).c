@@ -1,6 +1,5 @@
 //Viết hàm init và add_edge lưu trữ đa đồ thị có hướng có chứa khuyên
 void init_graph(Graph *pG, int n){
-void init_graph(Graph *pG, int n){
     pG->n = n;
     pG->m = 0;
     for (int u = 1; u <= n; u++){

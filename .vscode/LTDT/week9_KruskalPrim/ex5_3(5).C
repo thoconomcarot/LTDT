@@ -1,103 +1,85 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX_N 100
-// danh sách cung
-//.................Graph.......................
-typedef struct
-{
+#define MAX_N 1000
+
+typedef struct {
     int u, v;
-    int total;
+    int cost; // s * d
 } Edge;
-typedef struct
-{
+
+typedef struct {
     int n, m;
     Edge edges[MAX_N];
 } Graph;
 
-void init_graph(Graph *pG, int n)
-{
+int parent[MAX_N];
+
+// Khởi tạo đồ thị
+void init_graph(Graph *pG, int n) {
     pG->n = n;
     pG->m = 0;
 }
 
-void add_edge(Graph *pG, int u, int v, int total){ // d là giá của mỗi mét dây
-    if (u > v){
-		int temp = u;
-		u = v;
-		v = temp;
-	}
-    // đưa cung (u,v) vào edges
+// Thêm cạnh với chi phí
+void add_edge(Graph *pG, int u, int v, int s, int d) {
     pG->edges[pG->m].u = u;
     pG->edges[pG->m].v = v;
-    pG->edges[pG->m].total = total;
+    pG->edges[pG->m].cost = s * d;
     pG->m++;
 }
 
-//......................findroot..................
-int parent[MAX_N];
-
-// Tìm gốc của đỉnh u (lặp)
-int findRoot(int u)
-{
-    while (parent[u] != u)
+// Tìm gốc của đỉnh u
+int findRoot(int u) {
+    while (u != parent[u])
         u = parent[u];
     return u;
 }
 
-int cmpfunc(const void *a, const void *b){
-    return ((Edge*)a)->total- ((Edge*)b)->total;
+// Sắp xếp tăng dần theo cost
+int cmp(const void *a, const void *b) {
+    return ((Edge *)a)->cost - ((Edge *)b)->cost;
 }
 
-//......................Kruskal...................
-int Kruskal(Graph *pG, Graph *pT){
+// Kruskal: trả về tổng chi phí nhỏ nhất
+int kruskal(Graph *pG) {
+    qsort(pG->edges, pG->m, sizeof(Edge), cmp);
+    for (int i = 1; i <= pG->n; i++)
+        parent[i] = i;
 
-    //Sx cung của G theo thứ tự trọng số tăng dần
-    qsort(pG->edges, pG->m, sizeof(Edge), cmpfunc);
+    int total_cost = 0;
+    int count = 0;
 
-    //Khởi tạo pT không chứa cung nào, khởi tạo bộ quản lý các BPLT
-    init_graph(pT, pG->n);
-    for (int u = 1; u <= pG->n; u++)
-        parent[u] = u; // Mỗi đỉnh u là một bộ phận liên thông
+    for (int i = 0; i < pG->m && count < pG->n - 1; i++) {
+        int u = pG->edges[i].u;
+        int v = pG->edges[i].v;
+        int cost = pG->edges[i].cost;
+        int root_u = findRoot(u);
+        int root_v = findRoot(v);
 
-    int sum_w = 0; // Tổng trọng số các cung của cây
-
-    //Duyệt qua các cung của G (đã sắp xếp)
-    for (int e = 0; e < pG->m; e++)
-    {
-        int u = pG->edges[e].u;
-        int v = pG->edges[e].v;
-        int w = pG->edges[e].total;
-        int root_u = findRoot(u); // Tìm BPLT của u
-        int root_v = findRoot(v); // Tìm BPLT của v
-        if (root_u != root_v)
-        { // u và v ở 2 BPLT khác nhau
-            // Thêm cung (u, v; w) vào cây pT
-            add_edge(pT, u, v, total);
-            // Gộp 2 BPLT root_u và root_v lại
+        if (root_u != root_v) {
             parent[root_v] = root_u;
-            sum_w += w;
+            total_cost += cost;
+            count++;
         }
     }
-    return sum_w;
+
+    return total_cost;
 }
 
-// Sử dụng thuật toán Kruskal
-int main(){
-    Graph G, T;
-    int n, m, u, v, w, e;
-    int total_d= 0;
-    scanf("%d%d", &n, &m);
+int main() {
+    Graph G;
+    int n, m;
+    scanf("%d %d", &n, &m);
     init_graph(&G, n);
-    
-    for (e = 1; e <= m; e++){
-        scanf("%d%d%d%d", &u, &v, &w, &d);
-        add_edge(&G, u, v, w, d);
-        total_d += d*w;
+
+    for (int i = 0; i < m; i++) {
+        int u, v, s, d;
+        scanf("%d%d%d%d", &u, &v, &s, &d);
+        add_edge(&G, u, v, s, d);
     }
 
-    int sum_w = Kruskal(&G, &T); // Gọi hàm Kruskal
-    printf("%d\n", total_d);
-
+    int result = kruskal(&G);
+    printf("%d\n", result);
     return 0;
 }

@@ -158,6 +158,7 @@ int main (){
     Graph G;
     int n, m, u, v, c, f;
     scanf ("%d %d", &n, &m);
+    G.n = n;
     init_flow(&G);
 
     //Khởi tạo
